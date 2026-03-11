@@ -182,7 +182,6 @@ Description: High-quality wireless earbuds with noise cancellation.
 - Vite
 - TypeScript
 - TailwindCSS
-- ShadCN UI
 
 ## Backend
 
@@ -192,8 +191,6 @@ Description: High-quality wireless earbuds with noise cancellation.
 
 ## Development Tools
 
-- ESLint
-- Playwright (Testing)
 - Git & GitHub
 
 ---
