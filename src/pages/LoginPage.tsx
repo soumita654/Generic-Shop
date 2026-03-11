@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
-  const { signIn } = useAuth();
+  const { signIn, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,10 +25,31 @@ export default function LoginPage() {
     else navigate("/");
   };
 
+  const handleGoogleSignIn = async () => {
+    setError("");
+    setGoogleLoading(true);
+    const { error } = await signInWithGoogle();
+    if (error) {
+      setError(error.message);
+      setGoogleLoading(false);
+    }
+  };
+
   return (
     <Layout>
       <div className="container py-20 max-w-sm mx-auto animate-fade-in">
         <h1 className="font-heading text-2xl font-bold text-center mb-6">Welcome Back</h1>
+        <Button type="button" variant="outline" className="w-full mb-4" onClick={handleGoogleSignIn} disabled={googleLoading || loading}>
+          {googleLoading ? "Redirecting to Google..." : "Continue with Google"}
+        </Button>
+        <div className="relative mb-4">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">or continue with email</span>
+          </div>
+        </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label>Email</Label>
