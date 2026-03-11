@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 33% 97%;
+    --foreground: 220 20% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 12%;
+
+    --primary: 172 55% 38%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 40 25% 92%;
+    --secondary-foreground: 220 20% 12%;
+
+    --muted: 40 20% 94%;
+    --muted-foreground: 220 10% 46%;
+
+    --accent: 172 55% 38%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 40 15% 88%;
+    --input: 40 15% 88%;
+    --ring: 172 55% 38%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 172 55% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 40 25% 92%;
+    --sidebar-accent-foreground: 220 20% 12%;
+    --sidebar-border: 40 15% 88%;
+    --sidebar-ring: 172 55% 38%;
+
+    /* Custom tokens */
+    --success: 142 60% 40%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --badge-stock: 142 60% 40%;
+    --badge-low-stock: 38 92% 50%;
+    --badge-out-of-stock: 0 72% 51%;
+  }
+
+  .dark {
+    --background: 220 20% 8%;
+    --foreground: 40 33% 97%;
+    --card: 220 18% 12%;
+    --card-foreground: 40 33% 97%;
+    --popover: 220 18% 12%;
+    --popover-foreground: 40 33% 97%;
+    --primary: 172 55% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 40 33% 97%;
+    --muted: 220 15% 18%;
+    --muted-foreground: 220 10% 60%;
+    --accent: 172 55% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 172 55% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+@layer utilities {
+  .stock-badge-in {
+    @apply bg-[hsl(var(--badge-stock))] text-[hsl(var(--success-foreground))];
+  }
+  .stock-badge-low {
+    @apply bg-[hsl(var(--badge-low-stock))] text-[hsl(var(--warning-foreground))];
+  }
+  .stock-badge-out {
+    @apply bg-[hsl(var(--badge-out-of-stock))] text-[hsl(var(--destructive-foreground))];
+  }
+}
