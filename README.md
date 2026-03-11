@@ -6,17 +6,23 @@ This project was built as part of a hackathon project to demonstrate the impleme
 
 
 # ✨ Features
-#### 🧾 Product Catalog
+### 🧾 Product Catalog
 
 The landing page displays a responsive grid of products fetched from the database.
 
 Each product contains:
 Title
+
 Description
+
 Price
+
 Category
+
 Stock Quantity
+
 Product Image
+
 Products are dynamically rendered and update automatically based on filters.
 
 
