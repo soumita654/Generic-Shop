@@ -57,7 +57,16 @@ export default function ProfilePage() {
           </div>
           <div>
             <Label>Phone</Label>
-            <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" />
+            <Input
+              value={phone}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^0-9]/g, "");
+                if (val.length <= 10) setPhone(val);
+              }}
+              placeholder="9876543210"
+              maxLength={10}
+              inputMode="numeric"
+            />
           </div>
           <Button onClick={handleSave} disabled={loading} className="w-full">
             {loading ? "Saving..." : "Save Changes"}
