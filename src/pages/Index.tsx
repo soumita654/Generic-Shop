@@ -6,12 +6,16 @@ import { ProductFilters } from "@/components/products/ProductFilters";
 import { useProducts } from "@/hooks/useProducts";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search } from "lucide-react";
+import { CATEGORIES } from "@/lib/constants";
 
 const Index = () => {
   const { data: products, isLoading } = useProducts();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("search") ?? "";
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const selectedCategories = useMemo(
+    () => searchParams.getAll("category").filter((category): category is (typeof CATEGORIES)[number] => CATEGORIES.includes(category as (typeof CATEGORIES)[number])),
+    [searchParams]
+  );
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const maxPrice = useMemo(
@@ -30,6 +34,29 @@ const Index = () => {
     });
   }, [products, searchQuery, selectedCategories, priceRange]);
 
+  const updateSelectedCategories = (categories: string[]) => {
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.delete("category");
+
+    categories.forEach((category) => {
+      nextParams.append("category", category);
+    });
+
+    setSearchParams(nextParams);
+  };
+
+  const updateSearchQuery = (query: string) => {
+    const nextParams = new URLSearchParams(searchParams);
+
+    if (query) {
+      nextParams.set("search", query);
+    } else {
+      nextParams.delete("search");
+    }
+
+    setSearchParams(nextParams);
+  };
+
   return (
     <Layout>
       {/* Hero */}
@@ -47,8 +74,7 @@ const Index = () => {
               e.preventDefault();
               const fd = new FormData(e.currentTarget);
               const q = (fd.get("q") as string).trim();
-              if (q) setSearchParams({ search: q });
-              else setSearchParams({});
+              updateSearchQuery(q);
             }}
             className="mt-6 md:hidden flex max-w-sm mx-auto"
           >
@@ -71,7 +97,7 @@ const Index = () => {
           <div className="hidden lg:block w-56 shrink-0">
             <ProductFilters
               selectedCategories={selectedCategories}
-              onCategoryChange={setSelectedCategories}
+              onCategoryChange={updateSelectedCategories}
               priceRange={priceRange}
               onPriceRangeChange={setPriceRange}
               maxPrice={maxPrice}
@@ -90,7 +116,7 @@ const Index = () => {
               <div className="mt-4 p-4 border rounded-lg bg-card">
                 <ProductFilters
                   selectedCategories={selectedCategories}
-                  onCategoryChange={setSelectedCategories}
+                  onCategoryChange={updateSelectedCategories}
                   priceRange={priceRange}
                   onPriceRangeChange={setPriceRange}
                   maxPrice={maxPrice}
@@ -104,7 +130,7 @@ const Index = () => {
             {searchQuery && (
               <p className="mb-4 text-sm text-muted-foreground">
                 Showing results for "<span className="font-medium text-foreground">{searchQuery}</span>"
-                <button className="ml-2 text-primary underline" onClick={() => setSearchParams({})}>
+                <button className="ml-2 text-primary underline" onClick={() => updateSearchQuery("")}>
                   Clear
                 </button>
               </p>
