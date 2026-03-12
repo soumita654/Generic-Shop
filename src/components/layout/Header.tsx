@@ -1,8 +1,9 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ShoppingCart, User, LogOut, Package, Search } from "lucide-react";
+import { ShoppingCart, User, LogOut, Package, Search, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
 import { useState } from "react";
 import {
   DropdownMenu,
@@ -50,6 +51,7 @@ export function Header() {
         <div className="flex items-center gap-2">
           {user ? (
             <>
+              <WishlistButton />
               <CartButton />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -63,6 +65,9 @@ export function Header() {
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/orders")}>
                     <Package className="mr-2 h-4 w-4" /> Orders
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/wishlist")}>
+                    <Heart className="mr-2 h-4 w-4" /> Wishlist
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => signOut()}>
                     <LogOut className="mr-2 h-4 w-4" /> Sign Out
@@ -83,6 +88,22 @@ export function Header() {
         </div>
       </div>
     </header>
+  );
+}
+
+function WishlistButton() {
+  const { wishlistCount } = useWishlist();
+  const navigate = useNavigate();
+
+  return (
+    <Button variant="ghost" size="icon" className="relative" onClick={() => navigate("/wishlist")}>
+      <Heart className="h-5 w-5" />
+      {wishlistCount > 0 && (
+        <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+          {wishlistCount}
+        </span>
+      )}
+    </Button>
   );
 }
 

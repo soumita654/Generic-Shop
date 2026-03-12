@@ -3,13 +3,14 @@ import { Layout } from "@/components/layout/Layout";
 import { ProductCard } from "@/components/products/ProductCard";
 import { type Product, useProduct, useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
 import { useAuth } from "@/contexts/AuthContext";
 import { StockBadge } from "@/components/products/StockBadge";
 import { formatPrice, getStockStatus } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingCart, ArrowLeft, Star } from "lucide-react";
+import { ShoppingCart, ArrowLeft, Star, Heart } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMemo, useState } from "react";
 
@@ -78,6 +79,7 @@ export default function ProductDetail() {
   const { data: products, isLoading: isProductsLoading } = useProducts();
   const { user } = useAuth();
   const { addToCart } = useCart();
+  const { isWishlisted, toggleWishlist } = useWishlist();
   const navigate = useNavigate();
   const [qty, setQty] = useState(1);
   const relatedProducts = useMemo(() => {
@@ -120,6 +122,7 @@ export default function ProductDetail() {
   }
 
   const stockStatus = getStockStatus(product.stock_quantity);
+  const wishlisted = isWishlisted(product.id);
 
   return (
     <Layout>
@@ -181,6 +184,21 @@ export default function ProductDetail() {
               >
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 Add to Cart
+              </Button>
+
+              <Button
+                variant={wishlisted ? "default" : "outline"}
+                size="lg"
+                onClick={() => {
+                  if (!user) {
+                    navigate("/login");
+                    return;
+                  }
+                  toggleWishlist.mutate({ productId: product.id, isWishlisted: wishlisted });
+                }}
+              >
+                <Heart className={`mr-2 h-5 w-5 ${wishlisted ? "fill-current" : ""}`} />
+                {wishlisted ? "Wishlisted" : "Add to Wishlist"}
               </Button>
             </div>
           </div>

@@ -13,6 +13,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ProfilePage from "./pages/ProfilePage";
 import OrdersPage from "./pages/OrdersPage";
+import WishlistPage from "./pages/WishlistPage";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

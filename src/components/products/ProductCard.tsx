@@ -1,17 +1,20 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatPrice, getStockStatus, getStockLabel } from "@/lib/constants";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
 import type { Product } from "@/hooks/useProducts";
 import { useNavigate } from "react-router-dom";
 
 export function ProductCard({ product }: { product: Product }) {
   const { user } = useAuth();
   const { addToCart } = useCart();
+  const { isWishlisted, toggleWishlist } = useWishlist();
   const navigate = useNavigate();
   const stockStatus = getStockStatus(product.stock_quantity);
+  const wishlisted = isWishlisted(product.id);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -21,6 +24,16 @@ export function ProductCard({ product }: { product: Product }) {
       return;
     }
     addToCart.mutate({ productId: product.id });
+  };
+
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    toggleWishlist.mutate({ productId: product.id, isWishlisted: wishlisted });
   };
 
   return (
@@ -35,6 +48,13 @@ export function ProductCard({ product }: { product: Product }) {
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
         />
+        <button
+          onClick={handleWishlistToggle}
+          className="absolute top-2 left-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-background/90 text-foreground shadow-sm transition-colors hover:bg-background"
+          aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+        >
+          <Heart className={`h-4 w-4 ${wishlisted ? "fill-current text-red-500" : ""}`} />
+        </button>
         <span
           className={`absolute top-2 right-2 rounded-full px-2 py-0.5 text-xs font-semibold ${
             stockStatus === "in"
