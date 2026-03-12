@@ -60,38 +60,42 @@ const Index = () => {
   return (
     <Layout>
       {/* Hero */}
-      <section className="bg-gradient-to-br from-primary/10 via-background to-background py-12 md:py-20">
+      <section className="relative overflow-hidden py-14 md:py-20">
+        <div className="pointer-events-none absolute -left-16 top-10 h-44 w-44 rounded-full bg-primary/15 blur-3xl" />
+        <div className="pointer-events-none absolute -right-20 top-0 h-52 w-52 rounded-full bg-accent/15 blur-3xl" />
         <div className="container text-center">
-          <h1 className="font-heading text-3xl md:text-5xl font-bold tracking-tight">
+          <div className="mx-auto max-w-3xl rounded-3xl border border-border/75 bg-card/70 px-6 py-10 shadow-[0_22px_45px_-30px_hsl(var(--foreground)/0.5)] backdrop-blur-sm md:px-12">
+            <h1 className="font-heading text-3xl md:text-5xl font-bold tracking-tight">
             Shop the Best Deals
-          </h1>
-          <p className="mt-3 text-muted-foreground max-w-lg mx-auto">
+            </h1>
+            <p className="mt-3 text-muted-foreground max-w-xl mx-auto text-sm leading-6 md:text-base">
             Discover quality products across electronics, home, apparel, sports & books — all at amazing prices.
-          </p>
-          {/* Mobile search */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const fd = new FormData(e.currentTarget);
-              const q = (fd.get("q") as string).trim();
-              updateSearchQuery(q);
-            }}
-            className="mt-6 md:hidden flex max-w-sm mx-auto"
-          >
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input
-                name="q"
-                defaultValue={searchQuery}
-                placeholder="Search products..."
-                className="w-full rounded-lg border bg-card py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-              />
-            </div>
-          </form>
+            </p>
+            {/* Mobile search */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const fd = new FormData(e.currentTarget);
+                const q = (fd.get("q") as string).trim();
+                updateSearchQuery(q);
+              }}
+              className="mt-6 md:hidden flex max-w-sm mx-auto"
+            >
+              <div className="relative w-full">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input
+                  name="q"
+                  defaultValue={searchQuery}
+                  placeholder="Search products..."
+                  className="w-full rounded-xl border border-border/80 bg-background py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-primary/35"
+                />
+              </div>
+            </form>
+          </div>
         </div>
       </section>
 
-      <div className="container py-8">
+      <div className="container pb-10">
         <div className="flex gap-8">
           {/* Sidebar filters - desktop */}
           <div className="hidden lg:block w-56 shrink-0">
@@ -108,12 +112,12 @@ const Index = () => {
           <div className="lg:hidden mb-4">
             <button
               onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-              className="text-sm font-medium text-primary underline"
+              className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground hover:bg-secondary"
             >
               {mobileFiltersOpen ? "Hide Filters" : "Show Filters"}
             </button>
             {mobileFiltersOpen && (
-              <div className="mt-4 p-4 border rounded-lg bg-card">
+              <div className="mt-4">
                 <ProductFilters
                   selectedCategories={selectedCategories}
                   onCategoryChange={updateSelectedCategories}
@@ -128,7 +132,7 @@ const Index = () => {
           {/* Product grid */}
           <div className="flex-1">
             {searchQuery && (
-              <p className="mb-4 text-sm text-muted-foreground">
+              <p className="mb-4 rounded-lg border border-border/70 bg-card/70 px-3 py-2 text-sm text-muted-foreground">
                 Showing results for "<span className="font-medium text-foreground">{searchQuery}</span>"
                 <button className="ml-2 text-primary underline" onClick={() => updateSearchQuery("")}>
                   Clear
@@ -137,7 +141,7 @@ const Index = () => {
             )}
 
             {isLoading ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {Array.from({ length: 8 }).map((_, i) => (
                   <div key={i} className="space-y-3">
                     <Skeleton className="aspect-square rounded-lg" />
@@ -147,12 +151,12 @@ const Index = () => {
                 ))}
               </div>
             ) : filtered.length === 0 ? (
-              <div className="text-center py-20 text-muted-foreground">
+              <div className="section-shell text-center py-16 text-muted-foreground">
                 <p className="text-lg">No products found</p>
                 <p className="text-sm mt-1">Try adjusting your search or filters</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {filtered.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}

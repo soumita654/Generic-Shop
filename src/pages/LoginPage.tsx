@@ -37,7 +37,8 @@ export default function LoginPage() {
 
   return (
     <Layout>
-      <div className="container py-20 max-w-sm mx-auto animate-fade-in">
+      <div className="container py-16 max-w-md mx-auto animate-fade-in">
+        <div className="section-shell p-6 md:p-8">
         <h1 className="font-heading text-2xl font-bold text-center mb-6">Welcome Back</h1>
         <Button type="button" variant="outline" className="w-full mb-4" onClick={handleGoogleSignIn} disabled={googleLoading || loading}>
           {googleLoading ? (
@@ -92,6 +93,7 @@ export default function LoginPage() {
           Don't have an account?{" "}
           <Link to="/signup" className="text-primary font-medium hover:underline">Sign up</Link>
         </p>
+        </div>
       </div>
     </Layout>
   );

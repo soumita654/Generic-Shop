@@ -28,10 +28,12 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-card/80 backdrop-blur-md">
-      <div className="container flex h-16 items-center justify-between gap-4">
-        <Link to="/" className="flex items-center gap-2 font-heading text-xl font-bold tracking-tight text-foreground">
-          <Package className="h-6 w-6 text-primary" />
+    <header className="sticky top-0 z-50 border-b border-border/80 bg-background/75 backdrop-blur-xl supports-[backdrop-filter]:bg-background/65">
+      <div className="container flex h-20 items-center justify-between gap-4">
+        <Link to="/" className="flex items-center gap-3 font-heading text-xl font-bold tracking-tight text-foreground">
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/12 text-primary ring-1 ring-primary/20">
+            <Package className="h-5 w-5" />
+          </span>
           GenericShop
         </Link>
 
@@ -43,7 +45,7 @@ export function Header() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search products..."
-              className="w-full rounded-lg border bg-background py-2 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+              className="w-full rounded-xl border border-border/80 bg-card py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/35"
             />
           </div>
         </form>
@@ -55,7 +57,7 @@ export function Header() {
               <CartButton />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative">
+                  <Button variant="ghost" size="icon" className="relative rounded-xl hover:bg-primary/10 hover:text-primary">
                     <User className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -77,10 +79,10 @@ export function Header() {
             </>
           ) : (
             <div className="flex gap-2">
-              <Button variant="ghost" size="sm" onClick={() => navigate("/login")}>
+              <Button variant="ghost" size="sm" className="rounded-xl hover:bg-primary/10 hover:text-primary" onClick={() => navigate("/login")}>
                 Login
               </Button>
-              <Button size="sm" onClick={() => navigate("/signup")}>
+              <Button size="sm" className="rounded-xl px-5 shadow-[0_10px_24px_-16px_hsl(var(--primary))]" onClick={() => navigate("/signup")}>
                 Sign Up
               </Button>
             </div>
@@ -96,7 +98,7 @@ function WishlistButton() {
   const navigate = useNavigate();
 
   return (
-    <Button variant="ghost" size="icon" className="relative" onClick={() => navigate("/wishlist")}>
+    <Button variant="ghost" size="icon" className="relative rounded-xl hover:bg-primary/10 hover:text-primary" onClick={() => navigate("/wishlist")}>
       <Heart className="h-5 w-5" />
       {wishlistCount > 0 && (
         <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
@@ -112,7 +114,7 @@ function CartButton() {
   const navigate = useNavigate();
 
   return (
-    <Button variant="ghost" size="icon" className="relative" onClick={() => navigate("/cart")}>
+    <Button variant="ghost" size="icon" className="relative rounded-xl hover:bg-primary/10 hover:text-primary" onClick={() => navigate("/cart")}>
       <ShoppingCart className="h-5 w-5" />
       {cartCount > 0 && (
         <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">

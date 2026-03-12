@@ -52,7 +52,7 @@ function WishlistContent() {
   return (
     <div className="space-y-4 animate-fade-in">
       {items.map((item) => (
-        <div key={item.id} className="flex gap-4 p-4 border rounded-lg bg-card">
+        <div key={item.id} className="flex gap-4 rounded-2xl border border-border/80 bg-card/90 p-4 shadow-[0_12px_26px_-22px_hsl(var(--foreground)/0.6)]">
           <img
             src={item.product.image_url || "/placeholder.svg"}
             alt={item.product.title}
@@ -90,7 +90,7 @@ function WishlistContent() {
         </div>
       ))}
 
-      <div className="border-t pt-4 flex items-center justify-between">
+      <div className="flex items-center justify-between border-t border-border/70 pt-4">
         <span className="text-sm text-muted-foreground">{items.length} item(s) saved for later</span>
         <Button asChild variant="outline">
           <Link to="/cart">

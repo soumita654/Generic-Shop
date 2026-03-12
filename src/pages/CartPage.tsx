@@ -51,7 +51,7 @@ function CartContent() {
   return (
     <div className="space-y-4 animate-fade-in">
       {items.map((item) => (
-        <div key={item.id} className="flex gap-4 p-4 border rounded-lg bg-card">
+        <div key={item.id} className="flex gap-4 rounded-2xl border border-border/80 bg-card/90 p-4 shadow-[0_12px_26px_-22px_hsl(var(--foreground)/0.6)]">
           <img
             src={item.product.image_url || "/placeholder.svg"}
             alt={item.product.title}
@@ -65,14 +65,14 @@ function CartContent() {
             <div className="flex items-center gap-2 mt-2">
               <button
                 onClick={() => updateQuantity.mutate({ itemId: item.id, quantity: item.quantity - 1 })}
-                className="h-7 w-7 rounded border flex items-center justify-center hover:bg-muted transition-colors"
+                className="flex h-7 w-7 items-center justify-center rounded-lg border hover:bg-muted transition-colors"
               >
                 <Minus className="h-3 w-3" />
               </button>
               <span className="text-sm font-medium w-8 text-center">{item.quantity}</span>
               <button
                 onClick={() => updateQuantity.mutate({ itemId: item.id, quantity: Math.min(item.product.stock_quantity, item.quantity + 1) })}
-                className="h-7 w-7 rounded border flex items-center justify-center hover:bg-muted transition-colors"
+                className="flex h-7 w-7 items-center justify-center rounded-lg border hover:bg-muted transition-colors"
               >
                 <Plus className="h-3 w-3" />
               </button>
@@ -90,7 +90,7 @@ function CartContent() {
         </div>
       ))}
 
-      <div className="border-t pt-4 flex items-center justify-between">
+      <div className="flex items-center justify-between border-t border-border/70 pt-4">
         <span className="font-heading text-lg font-bold">Total: {formatPrice(cartTotal)}</span>
         <Button size="lg" onClick={() => navigate("/checkout")}>
           Proceed to Checkout
