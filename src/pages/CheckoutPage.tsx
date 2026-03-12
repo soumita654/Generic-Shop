@@ -180,7 +180,16 @@ export default function CheckoutPage() {
               </div>
               <div>
                 <Label>Pincode</Label>
-                <Input value={address.pincode} disabled className="bg-muted" placeholder="Auto-filled" />
+                <Input
+                  value={address.pincode}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^0-9]/g, "");
+                    if (val.length <= 6) setAddress({ ...address, pincode: val });
+                  }}
+                  placeholder="Enter pincode"
+                  maxLength={6}
+                  inputMode="numeric"
+                />
               </div>
             </div>
             <div className="flex justify-end pt-4">
