@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { useCart } from "@/hooks/useCart";
@@ -8,7 +8,9 @@ import { formatPrice } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CheckCircle } from "lucide-react";
+import { getStatesNames, getCitiesForState, getPincodeForCity } from "@/lib/indianLocations";
 
 type Step = "shipping" | "payment" | "confirmation";
 
@@ -30,6 +32,16 @@ export default function CheckoutPage() {
   });
 
   const [paymentMethod, setPaymentMethod] = useState("cod");
+
+  const cities = address.state ? getCitiesForState(address.state) : [];
+
+  // Auto-fill pincode when city changes
+  useEffect(() => {
+    if (address.state && address.city) {
+      const pin = getPincodeForCity(address.state, address.city);
+      if (pin) setAddress((prev) => ({ ...prev, pincode: pin }));
+    }
+  }, [address.state, address.city]);
 
   if (!user) {
     navigate("/login");
@@ -116,7 +128,16 @@ export default function CheckoutPage() {
               </div>
               <div>
                 <Label>Phone</Label>
-                <Input value={address.phone} onChange={(e) => setAddress({ ...address, phone: e.target.value })} placeholder="+91 98765 43210" />
+                <Input
+                  value={address.phone}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^0-9]/g, "");
+                    if (val.length <= 10) setAddress({ ...address, phone: val });
+                  }}
+                  placeholder="9876543210"
+                  maxLength={10}
+                  inputMode="numeric"
+                />
               </div>
             </div>
             <div>
@@ -125,22 +146,47 @@ export default function CheckoutPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <Label>City</Label>
-                <Input value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} placeholder="Mumbai" />
+                <Label>State</Label>
+                <Select
+                  value={address.state}
+                  onValueChange={(val) => setAddress({ ...address, state: val, city: "", pincode: "" })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select State" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getStatesNames().map((s) => (
+                      <SelectItem key={s} value={s}>{s}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
-                <Label>State</Label>
-                <Input value={address.state} onChange={(e) => setAddress({ ...address, state: e.target.value })} placeholder="Maharashtra" />
+                <Label>City</Label>
+                <Select
+                  value={address.city}
+                  onValueChange={(val) => setAddress({ ...address, city: val })}
+                  disabled={!address.state}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select City" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {cities.map((c) => (
+                      <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <Label>Pincode</Label>
-                <Input value={address.pincode} onChange={(e) => setAddress({ ...address, pincode: e.target.value })} placeholder="400001" />
+                <Input value={address.pincode} disabled className="bg-muted" placeholder="Auto-filled" />
               </div>
             </div>
             <div className="flex justify-end pt-4">
               <Button
                 onClick={() => setStep("payment")}
-                disabled={!address.fullName || !address.street || !address.city || !address.state || !address.pincode}
+                disabled={!address.fullName || !address.street || !address.city || !address.state || !address.pincode || address.phone.length !== 10}
               >
                 Continue to Payment
               </Button>
