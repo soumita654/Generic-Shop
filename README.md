@@ -308,7 +308,6 @@ Possible improvements include:
 - Product reviews and ratings
 - Admin dashboard for product management
 - Order tracking system
-- Wishlist feature
 - Product image upload system
 
 ---
