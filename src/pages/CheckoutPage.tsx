@@ -67,6 +67,7 @@ export default function CheckoutPage() {
       totalAmount: finalTotal,
       shippingAddress: address,
       paymentMethod,
+      discountAmount: discountAmount > 0 ? discountAmount : undefined,
     });
     clearDeal();
     setOrderPlaced(true);

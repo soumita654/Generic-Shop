@@ -155,6 +155,9 @@ export type Database = {
           full_name: string | null
           id: string
           phone: string | null
+          purchase_count: number
+          total_discount_given: number
+          total_order_value: number
           updated_at: string
         }
         Insert: {
@@ -163,6 +166,9 @@ export type Database = {
           full_name?: string | null
           id: string
           phone?: string | null
+          purchase_count?: number
+          total_discount_given?: number
+          total_order_value?: number
           updated_at?: string
         }
         Update: {
@@ -171,6 +177,9 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          purchase_count?: number
+          total_discount_given?: number
+          total_order_value?: number
           updated_at?: string
         }
         Relationships: []
@@ -211,6 +220,10 @@ export type Database = {
     Functions: {
       decrement_stock: {
         Args: { p_product_id: string; p_quantity: number }
+        Returns: undefined
+      }
+      update_customer_stats: {
+        Args: { p_order_total: number; p_discount_given?: number }
         Returns: undefined
       }
     }

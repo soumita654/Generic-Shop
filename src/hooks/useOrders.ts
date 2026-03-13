@@ -45,6 +45,8 @@ interface PlaceOrderParams {
   totalAmount: number;
   shippingAddress: Record<string, string>;
   paymentMethod: string;
+  /** Rupee amount discounted (original total minus final total). Used to track cumulative customer discounts. */
+  discountAmount?: number;
 }
 
 export function usePlaceOrder() {
@@ -52,7 +54,9 @@ export function usePlaceOrder() {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ items, totalAmount, shippingAddress, paymentMethod }: PlaceOrderParams) => {
+    mutationFn: async ({ items, totalAmount, shippingAddress, paymentMethod, discountAmount }: PlaceOrderParams) => {
+      // Compute original gross total so we record it correctly regardless of any discount
+      const originalTotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
       // Create order
       const { data: order, error: orderError } = await supabase
         .from("orders")
@@ -87,6 +91,17 @@ export function usePlaceOrder() {
 
       // Clear cart
       await supabase.from("cart_items").delete().eq("user_id", user!.id);
+
+      // Update customer purchase stats (purchase_count, cumulative totals, cumulative discounts).
+      // Non-fatal if it fails — we never want a stats write to roll back an actual order.
+      try {
+        await supabase.rpc("update_customer_stats", {
+          p_order_total: originalTotal,
+          p_discount_given: discountAmount && discountAmount > 0 ? discountAmount : 0,
+        });
+      } catch (_statsErr) {
+        // intentionally swallowed
+      }
 
       return order;
     },

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { CartItem } from "@/hooks/useCart";
 import { MAX_NEGOTIATION_DISCOUNT_PERCENT } from "@/hooks/useNegotiatedDeal";
+import { useAuth } from "@/contexts/AuthContext";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -17,6 +18,7 @@ interface NegotiationChatProps {
 }
 
 export function NegotiationChat({ items, cartTotal, onDiscountApplied, currentDiscount }: NegotiationChatProps) {
+  const { session } = useAuth();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -59,7 +61,9 @@ export function NegotiationChat({ items, cartTotal, onDiscountApplied, currentDi
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          // Prefer the user's JWT so the edge function can look up customer stats;
+          // fall back to anon key for unauthenticated sessions.
+          Authorization: `Bearer ${session?.access_token ?? import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({
           messages: allMsgs,
