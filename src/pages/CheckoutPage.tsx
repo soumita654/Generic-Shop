@@ -11,12 +11,14 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CheckCircle } from "lucide-react";
 import { getStatesNames, getCitiesForState, getPincodeForCity } from "@/lib/indianLocations";
+import { useNegotiatedDeal } from "@/hooks/useNegotiatedDeal";
 
 type Step = "shipping" | "payment" | "confirmation";
 
 export default function CheckoutPage() {
   const { user } = useAuth();
   const { items, cartTotal } = useCart();
+  const { activeDeal, clearDeal } = useNegotiatedDeal(items);
   const placeOrder = usePlaceOrder();
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>("shipping");
@@ -34,6 +36,8 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState("cod");
 
   const cities = address.state ? getCitiesForState(address.state) : [];
+  const discountAmount = activeDeal ? cartTotal * (activeDeal.percent / 100) : 0;
+  const finalTotal = cartTotal - discountAmount;
 
   // Auto-fill pincode when city changes
   useEffect(() => {
@@ -60,10 +64,11 @@ export default function CheckoutPage() {
         quantity: i.quantity,
         price: i.product.price,
       })),
-      totalAmount: cartTotal,
+      totalAmount: finalTotal,
       shippingAddress: address,
       paymentMethod,
     });
+    clearDeal();
     setOrderPlaced(true);
     setStep("confirmation");
   };
@@ -243,6 +248,16 @@ export default function CheckoutPage() {
               <div className="flex justify-between font-bold text-lg pt-2 border-t mt-2">
                 <span>Total</span>
                 <span>{formatPrice(cartTotal)}</span>
+              </div>
+              {activeDeal && (
+                <div className="flex justify-between text-sm py-1 text-green-700">
+                  <span>Negotiated Deal ({activeDeal.code})</span>
+                  <span>-{formatPrice(discountAmount)}</span>
+                </div>
+              )}
+              <div className="flex justify-between font-bold text-lg pt-2 border-t mt-2">
+                <span>Payable Total</span>
+                <span>{formatPrice(finalTotal)}</span>
               </div>
             </div>
 

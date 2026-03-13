@@ -2,3 +2,6 @@ project_id = "inobwkvvecznbfbqgkxx"
 
 [functions.product-chat]
 verify_jwt = false
+
+[functions.negotiate-price]
+verify_jwt = false
