@@ -29,7 +29,7 @@ export function Header() {
   };
 
   return (
-    <header className="fixed top-4 left-1/2 z-50 w-[95%] max-w-6xl -translate-x-1/2 rounded-2xl border bg-card/80 backdrop-blur-md py-3 shadow-soft floating-nav">
+    <header className="fixed top-0 left-1/2 z-50 w-[95%] max-w-6xl -translate-x-1/2 rounded-2xl border bg-card/80 backdrop-blur-md py-3 shadow-soft">
       <div className="container flex h-14 items-center justify-between gap-4">
         <Link to="/" className="flex items-center gap-3 font-heading text-lg md:text-xl font-bold tracking-tight text-foreground">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 text-primary ring-1 ring-primary/12 shadow-sm">
