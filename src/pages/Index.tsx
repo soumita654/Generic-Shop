@@ -9,6 +9,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Star, Smartphone, Home, Shirt, Dumbbell, BookOpen, Sparkles, ShoppingBag, Zap, Heart } from "lucide-react";
+import { VisualSearchPanel } from "@/components/visual/VisualSearchPanel";
 
 const Index = () => {
   const { data: products, isLoading } = useProducts();
@@ -122,6 +123,8 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      <VisualSearchPanel />
 
       {/* Categories */}
       <section className="py-12">

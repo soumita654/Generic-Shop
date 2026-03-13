@@ -16,6 +16,7 @@ import SignupPage from "./pages/SignupPage";
 import ProfilePage from "./pages/ProfilePage";
 import OrdersPage from "./pages/OrdersPage";
 import WishlistPage from "./pages/WishlistPage";
+import VisualStorefrontPage from "./pages/VisualStorefrontPage";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => (
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/orders" element={<OrdersPage />} />
               <Route path="/wishlist" element={<WishlistPage />} />
+              <Route path="/visual-storefront" element={<VisualStorefrontPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
