@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useState } from "react";
 import {
   DropdownMenu,
@@ -58,8 +59,13 @@ export function Header() {
           {user ? (
             <>
               <ThemeToggle />
-              <WishlistButton />
-              <CartButton />
+              <Button variant="ghost" size="icon" className="interactive-icon rounded-xl hover:bg-primary/10 hover:text-primary" onClick={() => navigate("/wishlist")}>
+                <Heart className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="interactive-icon rounded-xl hover:bg-primary/10 hover:text-primary relative" onClick={() => navigate("/cart")}>
+                <ShoppingCart className="h-5 w-5" />
+                {/* Cart count badge would go here */}
+              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative rounded-xl hover:bg-primary/10 hover:text-primary interactive-icon">
