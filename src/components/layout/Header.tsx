@@ -1,6 +1,5 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ShoppingCart, User, LogOut, Package, Search, Heart, Moon, Sun } from "lucide-react";
-import { useTheme } from "@/contexts/ThemeContext";
+import { ShoppingCart, User, LogOut, Package, Search, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/hooks/useCart";
@@ -59,13 +58,8 @@ export function Header() {
           {user ? (
             <>
               <ThemeToggle />
-              <Button variant="ghost" size="icon" className="interactive-icon rounded-xl hover:bg-primary/10 hover:text-primary" onClick={() => navigate("/wishlist")}>
-                <Heart className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="interactive-icon rounded-xl hover:bg-primary/10 hover:text-primary relative" onClick={() => navigate("/cart")}>
-                <ShoppingCart className="h-5 w-5" />
-                {/* Cart count badge would go here */}
-              </Button>
+              <WishlistButton />
+              <CartButton />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative rounded-xl hover:bg-primary/10 hover:text-primary interactive-icon">
@@ -105,25 +99,17 @@ export function Header() {
   );
 }
 
-function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
-  return (
-    <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-xl transition-all duration-300 hover:scale-110 hover:rotate-12">
-      {theme === "dark" ? <Sun className="h-4 w-4 text-amber-400 transition-all duration-300" /> : <Moon className="h-4 w-4 text-muted-foreground transition-all duration-300" />}
-    </Button>
-  );
-}
-
 function WishlistButton() {
   const { wishlistCount } = useWishlist();
   const navigate = useNavigate();
+  const badgeText = wishlistCount > 99 ? "99+" : String(wishlistCount);
 
   return (
-    <Button variant="ghost" size="icon" className="relative rounded-xl hover:bg-primary/10 hover:text-primary" onClick={() => navigate("/wishlist")}>
+    <Button variant="ghost" size="icon" className="relative rounded-xl hover:bg-primary/10 hover:text-primary interactive-icon" onClick={() => navigate("/wishlist")}>
       <Heart className="h-5 w-5" />
       {wishlistCount > 0 && (
-        <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-          {wishlistCount}
+        <span className="absolute -right-1 -top-1 min-w-5 px-1 flex h-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+          {badgeText}
         </span>
       )}
     </Button>
@@ -133,13 +119,14 @@ function WishlistButton() {
 function CartButton() {
   const { cartCount } = useCart();
   const navigate = useNavigate();
+  const badgeText = cartCount > 99 ? "99+" : String(cartCount);
 
   return (
-    <Button variant="ghost" size="icon" className="relative rounded-xl hover:bg-primary/10 hover:text-primary" onClick={() => navigate("/cart")}>
+    <Button variant="ghost" size="icon" className="relative rounded-xl hover:bg-primary/10 hover:text-primary interactive-icon" onClick={() => navigate("/cart")}>
       <ShoppingCart className="h-5 w-5" />
       {cartCount > 0 && (
-        <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-          {cartCount}
+        <span className="absolute -right-1 -top-1 min-w-5 px-1 flex h-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+          {badgeText}
         </span>
       )}
     </Button>
