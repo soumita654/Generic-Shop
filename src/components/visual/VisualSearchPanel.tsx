@@ -83,18 +83,18 @@ export function VisualSearchPanel() {
   return (
     <section className="py-12 md:py-16">
       <div className="container">
-        <div className="grid gap-6 overflow-hidden rounded-[32px] border border-border/70 bg-[radial-gradient(circle_at_top_left,_rgba(252,211,77,0.20),_transparent_35%),radial-gradient(circle_at_bottom_right,_rgba(125,211,252,0.18),_transparent_35%),linear-gradient(135deg,rgba(255,255,255,0.96),rgba(255,248,240,0.92))] p-6 shadow-[0_28px_70px_-50px_hsl(var(--foreground)/0.5)] md:grid-cols-[1.15fr_0.85fr] md:p-8">
+        <div className="grid gap-6 overflow-hidden rounded-[32px] border border-border/70 bg-gradient-to-br from-yellow-100/90 via-amber-50/85 to-yellow-50/75 dark:from-[#0f0f0f] dark:via-[#161616] dark:to-[#000000] p-6 shadow-[0_28px_70px_-50px_hsl(var(--foreground)/0.5)] md:grid-cols-[1.15fr_0.85fr] md:p-8 backdrop-blur-sm">
           <div className="space-y-5">
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/60 bg-amber-100/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-amber-900">
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/60 bg-amber-100/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-amber-900 dark:border-amber-400/40 dark:bg-amber-900/30 dark:text-amber-200">
               <Sparkles className="h-3.5 w-3.5" />
               Search by aesthetic
             </div>
 
             <div className="space-y-3">
-              <h2 className="max-w-2xl font-heading text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+              <h2 className="max-w-2xl font-heading text-3xl font-bold tracking-tight text-foreground md:text-4xl">
                 Upload a vibe. We build the storefront.
               </h2>
-              <p className="max-w-2xl text-sm leading-6 text-slate-700 md:text-base">
+              <p className="max-w-2xl text-sm leading-6 text-muted-foreground md:text-base">
                 Drop in a room, outfit, landscape, or artwork. The vision model extracts the palette, materials, and mood, then curates a landing page from products already in your catalog.
               </p>
             </div>
@@ -105,10 +105,10 @@ export function VisualSearchPanel() {
                 { icon: SwatchBook, label: "Materials", value: "Texture, finish, and tactile cues" },
                 { icon: ImagePlus, label: "Mood", value: "Aesthetic direction and vibe" },
               ].map((item) => (
-                <div key={item.label} className="rounded-2xl border border-white/60 bg-white/70 p-4 backdrop-blur-sm">
-                  <item.icon className="h-5 w-5 text-slate-900" />
-                  <p className="mt-3 text-sm font-semibold text-slate-900">{item.label}</p>
-                  <p className="mt-1 text-xs leading-5 text-slate-600">{item.value}</p>
+                <div key={item.label} className="rounded-2xl border border-border/50 bg-card/80 dark:bg-[#222222] dark:border-[#2f2f2f] p-4 backdrop-blur-sm">
+                  <item.icon className="h-5 w-5 text-foreground" />
+                  <p className="mt-3 text-sm font-semibold text-foreground">{item.label}</p>
+                  <p className="mt-1 text-xs leading-5 text-muted-foreground">{item.value}</p>
                 </div>
               ))}
             </div>
@@ -129,14 +129,14 @@ export function VisualSearchPanel() {
                 type="button"
                 size="lg"
                 variant="outline"
-                className="rounded-2xl px-5"
+                className="rounded-2xl px-5 border-border/60 hover:bg-accent/10 dark:bg-card/80 dark:hover:bg-card dark:text-foreground dark:border-border/50"
                 onClick={analyzeImage}
                 disabled={!preview || loading}
               >
                 {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ArrowRight className="mr-2 h-4 w-4" />}
                 Generate Storefront
               </Button>
-              {fileName && <p className="self-center text-xs text-slate-600">Selected: {fileName}</p>}
+              {fileName && <p className="self-center text-xs text-muted-foreground">Selected: {fileName}</p>}
             </div>
           </div>
 
@@ -151,9 +151,9 @@ export function VisualSearchPanel() {
               ) : (
                 <div className="max-w-xs space-y-3 px-6 text-center">
                   <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10">
-                    <ImagePlus className="h-7 w-7" />
+                    <ImagePlus className="h-7 w-7 text-slate-300" />
                   </div>
-                  <p className="text-sm font-semibold">No inspiration image yet</p>
+                  <p className="text-sm font-semibold text-slate-50">No inspiration image yet</p>
                   <p className="text-xs leading-5 text-slate-400">
                     Upload a Pinterest-style reference and we will translate the aesthetic into a product edit.
                   </p>
