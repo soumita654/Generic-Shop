@@ -28,7 +28,7 @@ const Index = () => {
     if (!products) return [];
     return products.filter((p) => {
       if (searchQuery && !p.title.toLowerCase().includes(searchQuery.toLowerCase()) && !p.description.toLowerCase().includes(searchQuery.toLowerCase())) return false;
-      if (selectedCategories.length && !selectedCategories.includes(p.category)) return false;
+      if (selectedCategories.length && !selectedCategories.includes(p.category as typeof selectedCategories[number])) return false;
       if (p.price < priceRange[0] || p.price > priceRange[1]) return false;
       return true;
     });

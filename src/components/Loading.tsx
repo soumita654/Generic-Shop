@@ -94,48 +94,22 @@ const Loading = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @keyframes blob {
-          0%, 100% {
-            transform: translate(0, 0) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
         }
-
         @keyframes fade-in-out {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.6;
-          }
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.6; }
         }
-
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-
-        .animation-delay-150 {
-          animation-delay: 150ms;
-        }
-
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-
-        .animate-fade-in-out {
-          animation: fade-in-out 2s ease-in-out infinite;
-        }
-      `}</style>
+        .animate-blob { animation: blob 7s infinite; }
+        .animation-delay-150 { animation-delay: 150ms; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+        .animate-fade-in-out { animation: fade-in-out 2s ease-in-out infinite; }
+      ` }} />
     </div>
   );
 };
