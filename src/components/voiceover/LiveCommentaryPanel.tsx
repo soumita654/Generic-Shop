@@ -104,6 +104,7 @@ export function LiveCommentaryPanel() {
   const lastMoveAt = useRef(0);
   const lastClickAt = useRef(0);
   const lastPos = useRef({ x: 0, y: 0, t: 0 });
+  const latestPositionRef = useRef<Position>({ x: 0, y: 112 });
   const dragOffset = useRef({ x: 0, y: 0 });
   const draggingRef = useRef(false);
 
@@ -117,6 +118,7 @@ export function LiveCommentaryPanel() {
     const saved = readSavedPosition();
     const next = saved ? clampPosition(saved, width, height) : defaultPosition(width, height);
     setPosition(next);
+    latestPositionRef.current = next;
 
     if (saved) {
       window.localStorage.setItem(POSITION_STORAGE_KEY, JSON.stringify(next));
@@ -125,7 +127,11 @@ export function LiveCommentaryPanel() {
     const onResize = () => {
       const panelWidth = panelRef.current?.offsetWidth ?? 320;
       const panelHeight = panelRef.current?.offsetHeight ?? 260;
-      setPosition((prev) => clampPosition(prev, panelWidth, panelHeight));
+      setPosition((prev) => {
+        const nextPos = clampPosition(prev, panelWidth, panelHeight);
+        latestPositionRef.current = nextPos;
+        return nextPos;
+      });
     };
 
     lastPos.current = { x: window.innerWidth / 2, y: window.innerHeight / 2, t: performance.now() };
@@ -219,6 +225,7 @@ export function LiveCommentaryPanel() {
       height,
     );
 
+    latestPositionRef.current = next;
     setPosition(next);
   };
 
@@ -227,22 +234,20 @@ export function LiveCommentaryPanel() {
     draggingRef.current = false;
     setDragging(false);
 
-    window.localStorage.setItem(POSITION_STORAGE_KEY, JSON.stringify(position));
+    window.localStorage.setItem(POSITION_STORAGE_KEY, JSON.stringify(latestPositionRef.current));
   };
 
   return (
     <aside
       ref={panelRef}
       style={{ left: `${position.x}px`, top: `${position.y}px` }}
-      className="fixed z-40 hidden w-80 rounded-2xl border border-border/70 bg-card/85 p-3 shadow-2xl backdrop-blur-md transition-colors duration-300 md:block"
+      className="fixed z-40 hidden w-80 cursor-grab rounded-2xl border border-border/70 bg-card/85 p-3 shadow-2xl backdrop-blur-md transition-colors duration-300 active:cursor-grabbing md:block"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={stopDragging}
+      onPointerCancel={stopDragging}
     >
-      <div
-        className="mb-2 flex cursor-grab items-center justify-between active:cursor-grabbing"
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={stopDragging}
-        onPointerCancel={stopDragging}
-      >
+      <div className="mb-2 flex items-center justify-between">
         <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Audio-less Voiceover</h3>
         <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
           <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
