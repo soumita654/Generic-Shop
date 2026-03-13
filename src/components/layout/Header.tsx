@@ -1,5 +1,6 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ShoppingCart, User, LogOut, Package, Search, Heart } from "lucide-react";
+import { ShoppingCart, User, LogOut, Package, Search, Heart, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/hooks/useCart";
@@ -28,10 +29,10 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/80 bg-background/75 backdrop-blur-xl supports-[backdrop-filter]:bg-background/65">
-      <div className="container flex h-20 items-center justify-between gap-4">
-        <Link to="/" className="flex items-center gap-3 font-heading text-xl font-bold tracking-tight text-foreground">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/12 text-primary ring-1 ring-primary/20">
+    <header className="fixed top-4 left-1/2 z-50 w-[95%] max-w-6xl -translate-x-1/2 rounded-2xl border bg-card/80 backdrop-blur-md py-3 shadow-soft floating-nav">
+      <div className="container flex h-14 items-center justify-between gap-4">
+        <Link to="/" className="flex items-center gap-3 font-heading text-lg md:text-xl font-bold tracking-tight text-foreground">
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 text-primary ring-1 ring-primary/12 shadow-sm">
             <Package className="h-5 w-5" />
           </span>
           GenericShop
@@ -45,19 +46,23 @@ export function Header() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search products..."
-              className="w-full rounded-xl border border-border/80 bg-card py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/35"
+              className="w-full rounded-xl border border-border/60 bg-background/5 py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/35 shadow-input"
             />
           </div>
         </form>
 
         <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" className="interactive-icon" onClick={() => {}} aria-hidden>
+            {/* spacer for alignment */}
+          </Button>
           {user ? (
             <>
+              <ThemeToggle />
               <WishlistButton />
               <CartButton />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative rounded-xl hover:bg-primary/10 hover:text-primary">
+                  <Button variant="ghost" size="icon" className="relative rounded-xl hover:bg-primary/10 hover:text-primary interactive-icon">
                     <User className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -78,11 +83,12 @@ export function Header() {
               </DropdownMenu>
             </>
           ) : (
-            <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
+              <ThemeToggle />
               <Button variant="ghost" size="sm" className="rounded-xl hover:bg-primary/10 hover:text-primary" onClick={() => navigate("/login")}>
                 Login
               </Button>
-              <Button size="sm" className="rounded-xl px-5 shadow-[0_10px_24px_-16px_hsl(var(--primary))]" onClick={() => navigate("/signup")}>
+              <Button size="sm" className="rounded-xl px-5 btn-elevated" onClick={() => navigate("/signup")}>
                 Sign Up
               </Button>
             </div>
@@ -90,6 +96,15 @@ export function Header() {
         </div>
       </div>
     </header>
+  );
+}
+
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme();
+  return (
+    <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-xl transition-all duration-300 hover:scale-110 hover:rotate-12">
+      {theme === "dark" ? <Sun className="h-4 w-4 text-amber-400 transition-all duration-300" /> : <Moon className="h-4 w-4 text-muted-foreground transition-all duration-300" />}
+    </Button>
   );
 }
 
