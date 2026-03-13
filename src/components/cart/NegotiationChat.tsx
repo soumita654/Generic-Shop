@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { Send, Bot, User, BadgePercent, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { formatPrice } from "@/lib/constants";
 import type { CartItem } from "@/hooks/useCart";
+import { MAX_NEGOTIATION_DISCOUNT_PERCENT } from "@/hooks/useNegotiatedDeal";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -12,7 +12,7 @@ const NEGOTIATE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/negotia
 interface NegotiationChatProps {
   items: CartItem[];
   cartTotal: number;
-  onDiscountApplied: (percent: number, reason: string) => void;
+  onDiscountApplied: (percent: number, reason: string, code?: string) => void;
   currentDiscount: number;
 }
 
@@ -40,8 +40,8 @@ export function NegotiationChat({ items, cartTotal, onDiscountApplied, currentDi
     setLoading(true);
 
     let assistantSoFar = "";
-    let toolCallArgs = "";
-    let toolCallActive = false;
+    const toolCallState = new Map<number, { name: string; args: string }>();
+    let discountApplied = false;
 
     const upsert = (chunk: string) => {
       assistantSoFar += chunk;
@@ -61,7 +61,12 @@ export function NegotiationChat({ items, cartTotal, onDiscountApplied, currentDi
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: allMsgs, cart }),
+        body: JSON.stringify({
+          messages: allMsgs,
+          cart,
+          current_discount_percent: currentDiscount,
+          cart_total: cartTotal,
+        }),
       });
 
       if (!resp.ok) {
@@ -97,18 +102,18 @@ export function NegotiationChat({ items, cartTotal, onDiscountApplied, currentDi
             // Handle tool calls
             if (delta?.tool_calls) {
               for (const tc of delta.tool_calls) {
-                if (tc.function?.name === "apply_discount") toolCallActive = true;
-                if (tc.function?.arguments) toolCallArgs += tc.function.arguments;
+                const idx = typeof tc.index === "number" ? tc.index : 0;
+                const prev = toolCallState.get(idx) ?? { name: "", args: "" };
+                toolCallState.set(idx, {
+                  name: tc.function?.name ?? prev.name,
+                  args: prev.args + (tc.function?.arguments ?? ""),
+                });
               }
             }
             // Check finish reason
             if (parsed.choices?.[0]?.finish_reason === "tool_calls" || parsed.choices?.[0]?.finish_reason === "stop") {
-              if (toolCallActive && toolCallArgs) {
-                try {
-                  const args = JSON.parse(toolCallArgs);
-                  const pct = Math.min(20, Math.max(0, args.discount_percent));
-                  onDiscountApplied(pct, args.reason || "Negotiated discount");
-                } catch { /* ignore parse errors */ }
+              if (!discountApplied) {
+                discountApplied = applyAutonomousDiscount(toolCallState, currentDiscount, onDiscountApplied);
               }
             }
           } catch {
@@ -118,13 +123,9 @@ export function NegotiationChat({ items, cartTotal, onDiscountApplied, currentDi
         }
       }
 
-      // Final check for tool call in case finish_reason wasn't caught
-      if (toolCallActive && toolCallArgs) {
-        try {
-          const args = JSON.parse(toolCallArgs);
-          const pct = Math.min(20, Math.max(0, args.discount_percent));
-          onDiscountApplied(pct, args.reason || "Negotiated discount");
-        } catch { /* ignore */ }
+      // Final check in case finish reason wasn't emitted.
+      if (!discountApplied) {
+        applyAutonomousDiscount(toolCallState, currentDiscount, onDiscountApplied);
       }
 
       setLoading(false);
@@ -242,4 +243,26 @@ export function NegotiationChat({ items, cartTotal, onDiscountApplied, currentDi
       </form>
     </div>
   );
+}
+
+function applyAutonomousDiscount(
+  toolCalls: Map<number, { name: string; args: string }>,
+  currentDiscount: number,
+  onDiscountApplied: (percent: number, reason: string, code?: string) => void
+): boolean {
+  for (const tc of toolCalls.values()) {
+    if (tc.name !== "apply_discount" || !tc.args) continue;
+    try {
+      const args = JSON.parse(tc.args) as { discount_percent?: number; reason?: string; discount_code?: string };
+      const requested = Math.min(MAX_NEGOTIATION_DISCOUNT_PERCENT, Math.max(0, Number(args.discount_percent) || 0));
+      const pct = Math.max(currentDiscount, requested);
+      if (pct <= 0) continue;
+      onDiscountApplied(pct, args.reason || "Negotiated discount", args.discount_code);
+      return true;
+    } catch {
+      // Ignore malformed partial tool-call payloads.
+    }
+  }
+
+  return false;
 }

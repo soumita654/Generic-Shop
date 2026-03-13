@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,6 +7,7 @@ import { Trash2, Plus, Minus, BadgePercent } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { NegotiationChat } from "@/components/cart/NegotiationChat";
 import { toast } from "sonner";
+import { useNegotiatedDeal } from "@/hooks/useNegotiatedDeal";
 
 export default function CartPage() {
   const { user } = useAuth();
@@ -37,7 +37,7 @@ export default function CartPage() {
 function CartContent() {
   const { items, isLoading, cartTotal, updateQuantity, removeFromCart } = useCart();
   const navigate = useNavigate();
-  const [discount, setDiscount] = useState<{ percent: number; reason: string } | null>(null);
+  const { activeDeal, applyDeal } = useNegotiatedDeal(items);
 
   if (isLoading) return <p className="text-muted-foreground">Loading cart...</p>;
 
@@ -52,12 +52,13 @@ function CartContent() {
     );
   }
 
-  const discountAmount = discount ? cartTotal * (discount.percent / 100) : 0;
+  const discountAmount = activeDeal ? cartTotal * (activeDeal.percent / 100) : 0;
   const finalTotal = cartTotal - discountAmount;
 
-  const handleDiscountApplied = (percent: number, reason: string) => {
-    setDiscount({ percent, reason });
-    toast.success(`🎉 ${percent}% discount applied! ${reason}`);
+  const handleDiscountApplied = (percent: number, reason: string, code?: string) => {
+    const applied = applyDeal(percent, reason, code);
+    if (!applied) return;
+    toast.success(`🎉 ${applied.percent}% discount applied with code ${applied.code}! ${applied.reason}`);
   };
 
   return (
@@ -110,13 +111,18 @@ function CartContent() {
             <span className="text-muted-foreground">Subtotal</span>
             <span>{formatPrice(cartTotal)}</span>
           </div>
-          {discount && (
+          {activeDeal && (
             <div className="flex justify-between text-sm">
               <span className="flex items-center gap-1.5 text-green-600">
                 <BadgePercent className="h-3.5 w-3.5" />
-                Negotiated Discount ({discount.percent}%)
+                Negotiated Discount ({activeDeal.percent}%)
               </span>
               <span className="text-green-600">-{formatPrice(discountAmount)}</span>
+            </div>
+          )}
+          {activeDeal && (
+            <div className="text-xs text-green-700">
+              Applied code: <span className="font-semibold">{activeDeal.code}</span> • {activeDeal.reason}
             </div>
           )}
           <div className="flex items-center justify-between border-t border-border/70 pt-2">
@@ -136,7 +142,7 @@ function CartContent() {
           items={items}
           cartTotal={cartTotal}
           onDiscountApplied={handleDiscountApplied}
-          currentDiscount={discount?.percent ?? 0}
+          currentDiscount={activeDeal?.percent ?? 0}
         />
       </div>
     </div>
